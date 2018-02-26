@@ -1,0 +1,27 @@
+{
+    "name": "first_server",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "root",
+    "contributors": [],
+    "dependencies": {
+        "express": "",
+        "http": "",
+        "socket.io": "",
+        "mysql": "",
+        "body-parser": "",
+        "jsonwebtoken": "",
+        "morgan": "",
+        "passport": "",
+        "passport-jwt": ""
+    },
+    "scripts": {
+        "start": "node index.js"
+    }
+}
