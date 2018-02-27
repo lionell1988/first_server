@@ -6,10 +6,6 @@ const   passport = require('passport'),
         urlencodedParser = bodyParser.urlencoded({extended: false});
 
 
-
-
-//var routerFun = function (req, res, next) {
-
 var router = express.Router();
 
 // define the home page route
@@ -34,8 +30,12 @@ router.post('/login', urlencodedParser, (req, res) => {
 
             authenticate(u).then((auth) => {
                 console.log(auth);
-               // res.sendStatus(200);
-                res.json({'msg':'welcome', 'code':200});
+                if (auth) {
+                    res.json({'msg': 'welcome', 'code': 200});
+                } else {
+                    //res.sendStatus(403);
+                    res.json({'msg': 'Failed', code: 403});
+                }
             }).catch((error) => {
                 console.log(error);
                 res.sendStatus(403);
@@ -58,7 +58,7 @@ function authenticate(u) {
         var auth = false;
         var name = u.name;
         var pwd = u.pwd;
-        var query = 'SELECT * FROM users WHERE name ="' + name + '" AND pwd = ' + pwd;
+        var query = 'SELECT * FROM users WHERE name ="' + name + '" AND pwd = "' + pwd + '"';
         var con = mysql.createConnection({
             host: "localhost",
             user: "root",
@@ -69,7 +69,7 @@ function authenticate(u) {
             console.log('connection to db');
             if (err)
                 return reject(err);
-            con.query(query, function (err, result, fields) {
+            con.query(query, function (err, result) {
                 if (err)
                     return reject(err);
                 if (result.length > 0)
@@ -83,7 +83,4 @@ function authenticate(u) {
     });
 }
 
-
-
 module.exports = router;
-//module.exports = routerFun;
