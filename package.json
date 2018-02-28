@@ -19,6 +19,7 @@
         "jsonwebtoken": "",
         "morgan": "",
         "passport": "",
+        "cors": "",
         "passport-jwt": ""
     },
     "scripts": {

@@ -17,6 +17,7 @@ router.get('/route1', (req, res) => {
     res.send('Route1');
 });
 
+//LOGIN
 router.post('/login', urlencodedParser, (req, res) => {
     console.log('login required');
     if (!req.body)
@@ -25,16 +26,17 @@ router.post('/login', urlencodedParser, (req, res) => {
         if (req.body.name !== null && req.body.password !== null) {
             u = new Object();
             // console.log(req.body.username);
-            u.name = req.body.username;
-            u.pwd = req.body.password;
+            u.username = req.body.username;
+            u.password = req.body.password;
 
             authenticate(u).then((auth) => {
                 console.log(auth);
                 if (auth) {
-                    res.json({'msg': 'welcome', 'code': 200});
+                    const token = createToken(u);
+                    res.json({'msg':{'txt': 'welcome', 'code': 200},'token':token});
                 } else {
                     //res.sendStatus(403);
-                    res.json({'msg': 'Failed', code: 403});
+                    res.json({'msg':{'txt': 'Failed', code: 403}});
                 }
             }).catch((error) => {
                 console.log(error);
@@ -49,6 +51,13 @@ router.post('/login', urlencodedParser, (req, res) => {
     }
 });
 
+function createToken(u) {
+    var token = jwt.sign(u, config.secret, {
+        expiresIn: 1440
+    });
+    return token;
+}
+
 
 
 function authenticate(u) {
@@ -56,8 +65,8 @@ function authenticate(u) {
         let mysql = require('mysql');
         console.log('logging ' + u.name + ' ' + u.pwd);
         var auth = false;
-        var name = u.name;
-        var pwd = u.pwd;
+        var name = u.username;
+        var pwd = u.password;
         var query = 'SELECT * FROM users WHERE name ="' + name + '" AND pwd = "' + pwd + '"';
         var con = mysql.createConnection({
             host: "localhost",
