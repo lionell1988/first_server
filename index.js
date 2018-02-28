@@ -10,7 +10,7 @@ const   express = require('express'),
 
 //enables CORS request
 var corsOptions = {
-    origin: 'http://localhost',
+    origin: '*',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
@@ -24,6 +24,8 @@ var httpServer = http.createServer(app);
 var io = require('socket.io')(httpServer);
 
 username = '';
+
+clients = new Array();
 
 io.use(function (socket, next) {
     console.log('new client');
@@ -44,19 +46,29 @@ io.use(function (socket, next) {
     }
 })
         .on('connection', function (socket) {
-            
-            console.log('socket opened; token: '+socket.handshake.query.token);
+            let cl = new Object();
+            cl.socket = socket;
+            cl.username = username;
+            clients.push(socket);
+            console.log('socket opened; token: ' + socket.handshake.query.token);
             socket.on('chat_msg', (msg) => {
                 //console.log(msg);
                 msg.username = username;
                 console.log(msg);
                 io.emit('chat_msg', msg);
             });
+
+        })
+        .on('disconnect', () => {
+            let cl = new Object();
+            cl.socket = socket;
+            cl.username = username;
+            console.log(username+' disconnected');
             
-            
-            
-        });
-        
+        })
+        ;
+
+
 
 
 
